@@ -17,15 +17,11 @@ class StartingUI:
     def starting_mode_run(self):
         while True:
             self.__print_menu()
-            command = 0
+            command = -1
             try:
                 command = int(input("Choose the command: ").strip())
-
             except ValueError:
                 print("\nChoose a valid option!\n")
-
-            except KeyboardInterrupt:
-                print("\nChoose an option!\n")
 
             if command == 0:
                 break

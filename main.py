@@ -8,7 +8,7 @@ from ui.starting_ui import StartingUI
 statistics_service = StatisticsService()
 
 event_service = EventService('data')
-participant_service = ParticipantService('data')
+participant_service = ParticipantService('data', event_service)
 
 event_ui = EventUI(event_service, participant_service, statistics_service)
 participant_ui = ParticipantUI(event_service, event_ui, participant_service, statistics_service)

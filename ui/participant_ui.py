@@ -20,8 +20,6 @@ class ParticipantUI:
               "2.Subscribe to an event\n"
               "3.Show events next week\n"
               "4.Show events by month\n"
-              "5.Go to organizer mode\n"
-              "6.Add a participant\n"
               "0.Back\n")
 
     def show_all(self):
@@ -31,14 +29,10 @@ class ParticipantUI:
     def participant_mode_run(self):
         while True:
             self.print_menu()
-            command = 0
+            command = -1
             try:
                 command = int(input("Choose the command: ").strip())
-
             except ValueError:
-                print("\nChoose a valid option!\n")
-
-            except KeyboardInterrupt:
                 print("\nChoose a valid option!\n")
 
             if command == 0:
@@ -46,18 +40,12 @@ class ParticipantUI:
             elif command == 1:
                 self.__event_ui.show_all()
             elif command == 2:
-                event_id = input("ID of the event you would like to sign up to: ")
-                participant_name = input("Enter your name: ")
-                self.__participant_service.subscribe_to_an_event(event_id, participant_name)
+                event_id = int(input("ID of the event you would like to sign up to: "))
+                self.__participant_service.subscribe_to_an_event(event_id)
             elif command == 3:
                 self.__show_events_next_week()
             elif command == 4:
                 self.__show_events_by_month()
-            elif command == 5:
-                print("Choose 'Organizer mode' in the options below\n")
-                break
-            elif command == 6:
-                self.__participant_service.add_participant()
 
     def by_no_of_available_places(self, event):
         return event.get_available_places()

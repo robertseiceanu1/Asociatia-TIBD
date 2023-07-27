@@ -54,7 +54,7 @@ class EventService:
         new_event.set_no_of_participants(0)
         new_event.set_available_places(int(input("Available places: ")))
         new_event.set_starting_date(date.fromisoformat(input("Starting date (YYYY-MM-DD): ")))
-        new_event.set_end_date(input("End time (YYYY-MM-DD): "))
+        new_event.set_end_date(date.fromisoformat(input("End time (YYYY-MM-DD): ")))
         new_event.set_website(input("Website: "))
         self.add_event(new_event)
 

@@ -5,9 +5,12 @@ from os.path import exists
 import pickle
 import qrcode
 
+from service.participant_service import ParticipantService
+
 
 class EventService:
     def __init__(self, data_folder):
+        self.__participant_service = None
         self.__data_folder = data_folder
         self.events_file = f"{data_folder}/events_file"
         saved_events = self.__load()
@@ -35,14 +38,17 @@ class EventService:
         else:
             return []
 
+    def set_participant_service(self, participant_service: ParticipantService):
+        self.__participant_service = participant_service
+
     def save(self):
         file = open(self.events_file, 'wb')
         pickle.dump(self.get_all_events(), file)
         file.close()
 
-    def add_event(self):
-        new_event = Event(0, "", "", 0, 0, date(2023, 1, 1), date(2023, 1, 1), "")
-        new_event.set_event_id(int(input("ID (Number): ")))
+    def add_event_input(self):
+        new_event = Event("0", "", "", 0, 0, date(2023, 1, 1), date(2023, 1, 1), "")
+        new_event.set_event_id(input("ID: "))
         new_event.set_title(input("Title: "))
         new_event.set_city(input("City: "))
         new_event.set_no_of_participants(0)
@@ -50,20 +56,24 @@ class EventService:
         new_event.set_starting_date(date.fromisoformat(input("Starting date (YYYY-MM-DD): ")))
         new_event.set_end_date(input("End time (YYYY-MM-DD): "))
         new_event.set_website(input("Website: "))
-        self.__repository.add(new_event)
-        self.__qr_code(new_event.get_website(), new_event.get_event_id())
+        self.add_event(new_event)
+
+    def add_event(self, event: Event):
+        self.__repository.add(event)
+        self.__qr_code(event.get_website(), event.get_event_id())
         self.save()
-        print(f"Event added: {new_event.get_title()}")
+        print(f"Event added: {event.get_title()}")
 
     def event_exists(self, event_id):
         return self.__repository.find_position(
             Event(event_id, "", "", 0, 0, date(2023, 1, 1), date(2023, 1, 1), "")) is not None
 
     def delete_event(self):
-        event_id = int(input("Event id: ").strip())
+        event_id = input("Event id: ").strip()
         event = Event(event_id, "", "", 0, 0, date(2023, 1, 1), date(2023, 1, 1), "")
         if self.event_exists(event_id):
             self.__repository.delete(event)
+            self.__participant_service.unsubscribe_all(event_id)
             self.save()
         else:
             raise Exception(f"Event with ID {event_id} does not exist!")

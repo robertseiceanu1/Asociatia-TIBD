@@ -20,6 +20,7 @@ class EventUI:
               "5.Show all city events\n"
               "6.Show all event participants\n"
               "7.Show all events with participants\n"
+              "8.Statistics\n"
               "0.Back\n")
 
     def show_all(self):
@@ -43,7 +44,7 @@ class EventUI:
                 break
             elif command == 1:
                 print("Give information about event: \n")
-                self.__event_service.add_event()
+                self.__event_service.add_event_input()
             elif command == 2:
                 self.__event_service.delete_event()
             elif command == 3:
@@ -56,10 +57,12 @@ class EventUI:
                 city = input("City you want to see the events of: ")
                 self.__show_all_city_events(city)
             elif command == 6:
-                event_id = int(input("ID of event you want to see the participants of: "))
+                event_id = input("ID of event you want to see the participants of: ")
                 self.__show_all_event_participants(event_id)
             elif command == 7:
                 self.show_all_events_with_participants()
+            elif command == 8:
+                self.show_stats()
 
     def __show_all_city_events(self, city):
         any_event = 0
@@ -78,7 +81,7 @@ class EventUI:
                     print(participant)
                     any_participant = 1
         if any_participant == 0:
-            print("No participants!")
+            print("The event has no participants!")
 
     def by_no_of_participants(self, event):
         return event.get_no_of_participants()
@@ -87,8 +90,11 @@ class EventUI:
         self.__event_service.get_all_events().sort(reverse=True, key=self.by_no_of_participants)
         any_event = 0
         for event in self.__event_service.get_all_events():
-            if int(event.get_no_of_participants()) > 0:
+            if event.get_no_of_participants() > 0:
                 print(event)
                 any_event = 1
         if any_event == 0:
-            print("No events!")
+            print("No events with participants!")
+
+    def show_stats(self):
+        self.__statistics_service.show_stats()

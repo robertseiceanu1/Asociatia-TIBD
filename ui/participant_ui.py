@@ -1,3 +1,5 @@
+import calendar
+
 from service.event_service import EventService
 from ui.event_ui import EventUI
 from service.participant_service import ParticipantService
@@ -40,7 +42,7 @@ class ParticipantUI:
             elif command == 1:
                 self.__event_ui.show_all()
             elif command == 2:
-                event_id = int(input("ID of the event you would like to sign up to: "))
+                event_id = input("ID of the event you would like to sign up to: ")
                 self.__participant_service.subscribe_to_an_event(event_id)
             elif command == 3:
                 self.__show_events_next_week()
@@ -53,19 +55,26 @@ class ParticipantUI:
     def __show_events_next_week(self):
         today = date.today()
         self.__event_service.get_all_events().sort(reverse=False, key=self.by_no_of_available_places)
+        any_events = False
         for event in self.__event_service.get_all_events():
             if (event.get_starting_date() - today).days < 7:
                 print(event)
+                any_events = True
+        if not any_events:
+            print("No events found!")
 
     def by_length(self, event):
         return (event.get_end_date() - event.get_starting_date()).days
 
     def __show_events_by_month(self):
         self.__event_service.get_all_events().sort(reverse=False, key=self.by_length)
-        for i in range(12):
-            print(f"Month {i}:")
+        any_events = False
+        for i in range(1, 13):
+            print(f"*** {calendar.month_name[i]} ***")
             for event in self.__event_service.get_all_events():
                 if event.get_starting_date().month == i:
                     print(event.get_title())
-                    print(' ')
-            print()
+                    any_events = True
+            print(' ')
+        if not any_events:
+            print("No events found!")
